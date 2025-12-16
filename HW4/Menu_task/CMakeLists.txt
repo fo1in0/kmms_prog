@@ -8,7 +8,7 @@ add_executable(Menu_Task
         main.cpp
         menu_elements.cpp
         elem_func.cpp
-        menu.h
+        menu_item.h
         menu_elements.h
         elem_func.h
 )
