@@ -1,0 +1,3 @@
+C:/_IT/code/kmms_prog/HW4/Menu_task/build/CMakeFiles/Menu_Task.dir
+C:/_IT/code/kmms_prog/HW4/Menu_task/build/CMakeFiles/edit_cache.dir
+C:/_IT/code/kmms_prog/HW4/Menu_task/build/CMakeFiles/rebuild_cache.dir
