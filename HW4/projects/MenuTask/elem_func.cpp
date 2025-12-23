@@ -48,3 +48,21 @@ const folin::MenuItem *MenuFunctions::show_global_menu(const folin::MenuItem *cu
 
     return handle_user_choice(current, n);
 }
+
+const folin::MenuItem* MenuFunctions::show_elem_menu(const folin::MenuItem* item) {
+    if (item == nullptr) {
+        std::cout << "Ошибка: передан nullptr в show_elem_menu" << std::endl;
+        return nullptr;
+    }
+
+    std::cout << "=====================================" << std::endl;
+    std::cout << "Текущий элемент: " << item->title << std::endl;
+    
+    std::cout << "=====================================" << std::endl;
+    
+    if (item->children_count > 0) {
+        return show_global_menu(item);
+    }
+    
+    return item;
+}

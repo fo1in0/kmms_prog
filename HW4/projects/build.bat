@@ -10,7 +10,7 @@ mkdir %BUILD_FOLDER%
 cd %BUILD_FOLDER%
 
 echo Генерация проекта...
-cmake -G "MinGW Makefiles" ..\HW4\projects
+cmake -G "Ninja" ..\HW4\projects
 
 echo Сборка проекта...
 cmake --build .

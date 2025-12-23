@@ -13,5 +13,6 @@ target_link_libraries(test_bubble
     gtest_main
 )
 
-enable_testing()
-add_test(NAME bubble_sort_test COMMAND test_bubble)
+
+
+add_test(NAME BubbleSortTest COMMAND test_bubble)
