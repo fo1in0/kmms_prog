@@ -1,9 +1,21 @@
-#Шаблоны игнорирования
 
-build_*/
-lib/
+build/
+out/
+bin/
+obj/
 
-*.exe
-*.ii
-*.s
-*.o
+
+HW4/projects/lib/
+
+
+CMakeCache.txt
+CMakeFiles/
+cmake_install.cmake
+Makefile
+*.ninja
+*.ninja_deps
+
+
+.vs/
+.idea/
+*.user
