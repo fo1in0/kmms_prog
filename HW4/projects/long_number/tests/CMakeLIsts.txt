@@ -1,0 +1,25 @@
+include(FetchContent)
+
+FetchContent_Declare(
+	googletest
+	URL https://github.com/google/googletest/archive/03597a01ee50ed33e9dfd640b249b4be3799d395.zip
+	DOWNLOAD_EXTRACT_TIMESTAMP TRUE
+)
+
+FetchContent_MakeAvailable(googletest)
+
+# Используем файлы из папки src
+add_library(long_number_lib ${CMAKE_SOURCE_DIR}/src/long_number.cpp)
+
+add_executable(long_number_test test_long_number.cpp)
+
+target_link_libraries(long_number_test
+	PRIVATE
+		gtest_main
+		long_number_lib
+)
+
+target_include_directories(long_number_test PRIVATE ${CMAKE_SOURCE_DIR}/src)
+
+include(GoogleTest)
+gtest_discover_tests(long_number_test)
