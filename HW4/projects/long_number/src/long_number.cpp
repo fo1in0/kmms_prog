@@ -245,17 +245,26 @@ LongNumber LongNumber::operator * (const LongNumber& x) const {
 }
 
 LongNumber LongNumber::operator / (const LongNumber& x) const {
-    if (x.sign == 0) return LongNumber("0"); 
+    if (x.sign == 0) return LongNumber("0");
     if (this->sign == 0) return LongNumber("0");
 
+    // Определяем знак результата
+    bool result_negative = (this->sign != x.sign);
+    
+    // Работаем с абсолютными значениями
     LongNumber dividend = *this;
     LongNumber divisor = x;
-    
     dividend.sign = 1;
     divisor.sign = 1;
     
     if (dividend.compare(divisor) == -1) {
-        return LongNumber("0");
+        LongNumber result("0");
+        // Если делимое не ноль и оба числа отрицательные, то -1
+        if (this->sign == -1 && x.sign == -1 && dividend != LongNumber("0")) {
+            result.sign = -1;
+            result = LongNumber("1");
+        }
+        return result;
     }
     
     LongNumber result("0");
@@ -284,6 +293,10 @@ LongNumber LongNumber::operator / (const LongNumber& x) const {
             digit++;
         }
         
+        if (result.length == 1 && result.numbers[0] == 0 && digit == 0) {
+            continue;
+        }
+        
         if (result.length == 1 && result.numbers[0] == 0) {
             delete[] result.numbers;
             result.length = 1;
@@ -301,15 +314,29 @@ LongNumber LongNumber::operator / (const LongNumber& x) const {
         }
     }
     
-    result.sign = (this->sign == x.sign) ? 1 : -1;
+    bool has_remainder = !(current.length == 1 && current.numbers[0] == 0);
     
     if (result.length == 1 && result.numbers[0] == 0) {
         result.sign = 0;
+        return result;
+    }
+    
+    // Корректировка только когда оба числа отрицательные и есть остаток
+    if (this->sign == -1 && x.sign == -1 && has_remainder) {
+        LongNumber one("1");
+        result = plus_modules(result, one);
+        result.sign = 1;
+    } else if (this->sign == -1 && x.sign == 1 && has_remainder) {
+        // Для отрицательного делимого и положительного делителя
+        LongNumber one("1");
+        result = plus_modules(result, one);
+        result.sign = -1;
+    } else {
+        result.sign = result_negative ? -1 : 1;
     }
     
     return result;
 }
-
 LongNumber LongNumber::operator % (const LongNumber& x) const {
     if (x.sign == 0) return LongNumber("0");
     
