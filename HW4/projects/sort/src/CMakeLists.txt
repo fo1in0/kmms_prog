@@ -1,6 +1,16 @@
-add_library(bubble_sort_lib STATIC
+add_library(${BUBBLE_SORT_LIB_NAME} STATIC
     bubble_sort.cpp
     bubble_sort.hpp
 )
 
-target_include_directories(bubble_sort_lib PUBLIC .)
+set_target_properties(${BUBBLE_SORT_LIB_NAME} PROPERTIES
+    OUTPUT_NAME "${BUBBLE_SORT_LIB_FILE_NAME}"
+    PREFIX "lib"
+    SUFFIX ".a"
+)
+
+target_include_directories(${BUBBLE_SORT_LIB_NAME}
+    PUBLIC
+    ${CMAKE_CURRENT_SOURCE_DIR}
+)
+

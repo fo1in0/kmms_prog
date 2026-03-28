@@ -1,13 +1,8 @@
 cmake_minimum_required(VERSION 3.10)
-project(CMake_MultiProject)
-enable_testing()
+project(LongNumber)
 
-# Подключаем GoogleTest
-add_subdirectory(lib/googletest/googletest)
+set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-# Подключаем проект меню
-add_subdirectory(MenuTask)
-
-# Подключаем библиотеку сортировки и тесты
-add_subdirectory(sort/src)
-add_subdirectory(sort/test)
+add_subdirectory(long_number)
+add_subdirectory(tests)

@@ -1,7 +1,7 @@
 #include <gtest/gtest.h>
 #include "long_number.hpp"
 
-using bvs::LongNumber;
+using biv::LongNumber;
 
 class FComparisons : public testing::Test {
 	public:

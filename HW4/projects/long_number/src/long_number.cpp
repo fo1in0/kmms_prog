@@ -4,7 +4,7 @@
 #include <iostream>
 #include <string>
 
-using bvs::LongNumber;
+using biv::LongNumber;
 using namespace std;
 		
 LongNumber::LongNumber() {
@@ -55,8 +55,6 @@ LongNumber::~LongNumber() {
 }
 
 LongNumber& LongNumber::operator = (const char* const str) {
-	delete[] numbers;
-	numbers = nullptr;
 	create_from_str(str);
 	return *this;
 }
@@ -91,16 +89,18 @@ LongNumber& LongNumber::operator = (LongNumber&& x) {
 }
 
 bool LongNumber::operator == (const LongNumber& x) const {
-	if(this == &x) return true;
-	if(this->sign != x.sign) return false;
-	if(this->length != x.length) return false;
+	if(this == &x) return 1;
+	if(this->sign != x.sign) return 0;
+	if(this->length != x.length) return 0;
 
+	bool equal = 1;
 	for(int i = 0; i < this->length; i++){
 		if(this->numbers[i] != x.numbers[i]){
-			return false;
+			equal = 0;
+			break;
 		}
 	}
-	return true;
+	return equal;
 }
 
 bool LongNumber::operator != (const LongNumber& x) const {
@@ -108,35 +108,46 @@ bool LongNumber::operator != (const LongNumber& x) const {
 }
 
 bool LongNumber::operator > (const LongNumber& x) const {
-    if (this->sign != x.sign) {
-        return this->sign > x.sign;
-    }
-    
-    if (this->sign == 0) return false;
-    
-    if (this->length != x.length) {
-        if (this->sign > 0) {
-            return this->length > x.length;
-        } else {
-            return this->length < x.length;
-        }
-    }
-    
-    for (int i = 0; i < this->length; i++) {
-        if (this->numbers[i] != x.numbers[i]) {
-            if (this->sign > 0) {
-                return this->numbers[i] > x.numbers[i];
-            } else {
-                return this->numbers[i] < x.numbers[i];
-            }
-        }
-    }
-    
-    return false;
+	if(this==&x || this->sign < x.sign) return 0;
+	if(this->sign > x.sign) return 1;
+	if(this->sign == 0) return 0;
+
+	if(this->sign > 0){
+		if(this->length > x.length) return 1;
+		if(this->length < x.length) return 0;
+
+		for(int i = 0; i < this->length; i++){
+			if(this->numbers[i] < x.numbers[i]) return 0;
+			if(this->numbers[i] > x.numbers[i]) return 1;
+		}
+		return 0;
+	}
+
+	if(this->sign < 0){
+		if(this->length > x.length) return 0;
+		if(this->length < x.length) return 1;
+
+		for(int i = 0; i < this->length; i++){
+			if(this->numbers[i] < x.numbers[i]) return 1;
+			if(this->numbers[i] > x.numbers[i]) return 0;
+		}
+		return 0;
+	}
+
+	return 0;
 }
 
 bool LongNumber::operator < (const LongNumber& x) const {
 	return (x > *this);
+}
+bool LongNumber::operator >= (const LongNumber& x) const 
+{
+    return (*this > x) || (*this == x);
+}
+
+bool LongNumber::operator <= (const LongNumber& x) const 
+{
+    return (*this < x) || (*this == x);
 }
 
 LongNumber LongNumber::operator + (const LongNumber& x) const {
@@ -145,7 +156,7 @@ LongNumber LongNumber::operator + (const LongNumber& x) const {
 
     if (this->sign == x.sign) {
         LongNumber result = plus_modules(*this, x);
-        result.sign = this->sign;
+        if (result.sign != 0) result.sign = this->sign;
         return result;
     }
 
@@ -162,11 +173,15 @@ LongNumber LongNumber::operator + (const LongNumber& x) const {
 }
 
 LongNumber LongNumber::operator - (const LongNumber& x) const {
-    if (x.sign == 0) return *this;
     if (this->sign == 0) {
-        LongNumber result = x;
-        result.sign = -x.sign;
-        return result;
+        LongNumber x_copy = x;
+        x_copy.sign = -x.sign;
+        return x_copy;
+    } 
+    if (x.sign == 0) return *this;
+
+    if (this->sign == x.sign && this->compare(x) == 0) {
+        return LongNumber("0");
     }
 
     if (this->sign != x.sign) {
@@ -176,14 +191,15 @@ LongNumber LongNumber::operator - (const LongNumber& x) const {
     }
 
     int cmp = this->compare(x);
-    if (cmp == 0) return LongNumber("0");
     
     LongNumber result = minus_modules(*this, x);
     
-    if ((this->sign == 1 && cmp == 1) || (this->sign == -1 && cmp == -1)) {
-        result.sign = 1;
+    if (this->sign == 1) {
+        if (cmp == 1) result.sign = 1;
+        else result.sign = -1;
     } else {
-        result.sign = -1;
+        if (cmp == 1) result.sign = -1;
+        else result.sign = 1;
     }
     
     return result;
@@ -204,28 +220,35 @@ LongNumber LongNumber::operator * (const LongNumber& x) const {
 
 	int len_a = this->length;
 	int len_b = x.length;
-	
+	int sign_a = this->sign;
+	int sign_b = x.sign;
 	std::reverse(a, a + len_a);
 	std::reverse(b, b + len_b);
+
 	
-	int len_c = len_a + len_b;
+	int len_c = len_a + len_b + 1;
 	int* c = new int[len_c]();
-	
-	int sign_c = (this->sign == x.sign) ? 1 : -1;
+	int sign_c;
+	if (sign_a < sign_b || sign_a > sign_b) sign_c = -1;
+	else sign_c = 1;
+
+	if (len_a < len_b){ //a - more len than b
+            swap(a, b);
+			swap(len_a, len_b);
+    }
 
 	for (int i = 0; i < len_a; i++){
         for (int j = 0; j < len_b; j++){
             c[i + j] += a[i] * b[j];
         }
     }
-    
     for (int i = 0; i < len_c - 1; i++){
         c[i + 1] += c[i] / 10;
         c[i] %= 10;
     }
 
 	while (len_c > 1 && c[len_c - 1] == 0) {
-        len_c--;
+            len_c--;
     }
 
     string result_str;
@@ -237,128 +260,76 @@ LongNumber LongNumber::operator * (const LongNumber& x) const {
     delete[] b;
     delete[] c;
 
-    LongNumber result(result_str.c_str());
-    if (result_str != "0") {
-        result.sign = sign_c;
-    }
-    return result;
+    if (result_str == "0") return LongNumber("0");
+    if (sign_c == -1) result_str = "-" + result_str;
+    return LongNumber(result_str.c_str());
 }
 
-LongNumber LongNumber::operator / (const LongNumber& x) const {
-    if (x.sign == 0) return LongNumber("0");
-    if (this->sign == 0) return LongNumber("0");
+LongNumber LongNumber::operator / (const LongNumber& x) const
+{
+    if (this->is_zero() || x.is_zero()) {
+        return LongNumber();
+    }
 
-    // Определяем знак результата
-    bool result_negative = (this->sign != x.sign);
-    
-    // Работаем с абсолютными значениями
     LongNumber dividend = *this;
     LongNumber divisor = x;
     dividend.sign = 1;
     divisor.sign = 1;
-    
-    if (dividend.compare(divisor) == -1) {
-        LongNumber result("0");
-        // Если делимое не ноль и оба числа отрицательные, то -1
-        if (this->sign == -1 && x.sign == -1 && dividend != LongNumber("0")) {
-            result.sign = -1;
-            result = LongNumber("1");
-        }
-        return result;
+
+    if (dividend < divisor) {
+        return LongNumber();
     }
-    
-    LongNumber result("0");
+
+    LongNumber quotient(dividend.length, 1);
     LongNumber current("0");
-    
+
     for (int i = 0; i < dividend.length; i++) {
-        if (!(current.length == 1 && current.numbers[0] == 0)) {
-            int* new_digits = new int[current.length + 1];
-            for (int j = 0; j < current.length; j++) {
-                new_digits[j] = current.numbers[j];
+       current = current * "10";
+        
+        LongNumber digit(1, 1);
+        digit.numbers[0] = dividend.numbers[i];
+        current = current + digit;
+
+        int quotient_digit = 0;
+        for (int q = 0; q <= 9; q++) {
+            LongNumber product = divisor * q;
+            if (product <= current) {
+                quotient_digit = q;
+            } else {
+                break;
             }
-            new_digits[current.length] = dividend.numbers[i];
-            delete[] current.numbers;
-            current.numbers = new_digits;
-            current.length++;
-        } else {
-            delete[] current.numbers;
-            current.length = 1;
-            current.numbers = new int[1];
-            current.numbers[0] = dividend.numbers[i];
         }
-        
-        int digit = 0;
-        while (current.compare(divisor) >= 0) {
-            current = minus_modules(current, divisor);
-            digit++;
-        }
-        
-        if (result.length == 1 && result.numbers[0] == 0 && digit == 0) {
-            continue;
-        }
-        
-        if (result.length == 1 && result.numbers[0] == 0) {
-            delete[] result.numbers;
-            result.length = 1;
-            result.numbers = new int[1];
-            result.numbers[0] = digit;
-        } else {
-            int* new_digits = new int[result.length + 1];
-            for (int j = 0; j < result.length; j++) {
-                new_digits[j] = result.numbers[j];
-            }
-            new_digits[result.length] = digit;
-            delete[] result.numbers;
-            result.numbers = new_digits;
-            result.length++;
-        }
+
+        quotient.numbers[i] = quotient_digit;
+
+        LongNumber product = divisor * LongNumber(std::to_string(quotient_digit).c_str());
+        current = current - product;
     }
-    
-    bool has_remainder = !(current.length == 1 && current.numbers[0] == 0);
-    
+
+    if (this->sign == -1 && x.numbers[0] > 1) {
+        quotient.numbers[quotient.length - 1] = quotient.numbers[quotient.length - 1] + 1;
+    }
+
+    int begin = 0;
+    while (begin < quotient.length - 1 && quotient.numbers[begin] == 0) {
+        begin++;
+    }
+
+    LongNumber result(quotient.length - begin, this->sign * x.sign);
+    for (int i = 0; i < result.length; i++) {
+        result.numbers[i] = quotient.numbers[begin + i];
+    }
+
     if (result.length == 1 && result.numbers[0] == 0) {
-        result.sign = 0;
-        return result;
-    }
-    
-    // Корректировка только когда оба числа отрицательные и есть остаток
-    if (this->sign == -1 && x.sign == -1 && has_remainder) {
-        LongNumber one("1");
-        result = plus_modules(result, one);
         result.sign = 1;
-    } else if (this->sign == -1 && x.sign == 1 && has_remainder) {
-        // Для отрицательного делимого и положительного делителя
-        LongNumber one("1");
-        result = plus_modules(result, one);
-        result.sign = -1;
-    } else {
-        result.sign = result_negative ? -1 : 1;
     }
-    
+
     return result;
 }
-LongNumber LongNumber::operator % (const LongNumber& x) const {
-    if (x.sign == 0) return LongNumber("0");
-    
-    LongNumber quotient = *this / x;
-    LongNumber product = quotient * x;
-    LongNumber remainder = *this - product;
-    
-    if (remainder.sign == -1) {
-        if (x.sign == 1) {
-            remainder = remainder + x;
-        } else {
-            LongNumber positive_x = x;
-            positive_x.sign = 1;
-            remainder = remainder + positive_x;
-        }
-    }
-    
-    if (remainder.compare(LongNumber("0")) == 0) {
-        remainder.sign = 0;
-    }
-    
-    return remainder;
+
+LongNumber LongNumber::operator % (const LongNumber& x) const
+{
+    return *this - (*this / x) * x;
 }
 
 bool LongNumber::is_negative() const noexcept {
@@ -368,6 +339,7 @@ bool LongNumber::is_negative() const noexcept {
 // ----------------------------------------------------------
 // PRIVATE
 // ----------------------------------------------------------
+
 int LongNumber::get_length(const char* const str) const noexcept {
 	int result = 0;
 	int start = 0;
@@ -400,22 +372,22 @@ void LongNumber::create_from_str(const char* const str){
         start = 0;
     }
     
-    int str_len = strlen(str);
-    while (start < str_len && str[start] == '0') {
-        start++;
+    length = strlen(str) - start;
+    
+    bool all_zeros = true;
+    for (int i = 0; i < length; ++i) {
+        if (str[start + i] != '0') {
+            all_zeros = false;
+            break;
+        }
     }
     
-    if (start == str_len) {
+    if (all_zeros) {
         sign = 0;
         length = 1;
-        numbers = new int[1];
-        numbers[0] = 0;
-        return;
     }
     
-    length = str_len - start;
     numbers = new int[length];
-    
     for (int i = 0; i < length; ++i) {
         numbers[i] = str[start + i] - '0';
     }
@@ -430,6 +402,11 @@ int LongNumber::compare(const LongNumber& other) const {
         if (this->numbers[i] < other.numbers[i]) return -1;
     }
     return 0;
+}
+
+bool LongNumber::is_zero() const noexcept
+{
+    return length == 1 && numbers[0] == 0;
 }
 
 LongNumber LongNumber::plus_modules(const LongNumber& a, const LongNumber& b) const {
@@ -538,7 +515,7 @@ LongNumber LongNumber::minus_modules(const LongNumber& a, const LongNumber& b) c
 // ----------------------------------------------------------
 // FRIENDLY
 // ----------------------------------------------------------
-namespace bvs {
+namespace biv {
 	ostream& operator << (std::ostream &os, const LongNumber& x) {
 		if(x.sign == 0){
 			os << "0";
@@ -552,4 +529,10 @@ namespace bvs {
 		}
 		return os;
 	}
+	LongNumber operator * (const LongNumber& num, const char* str) {
+		return num * LongNumber(str);
+	}
+	LongNumber operator * (const LongNumber& num, int x) {
+        return num * LongNumber(std::to_string(x).c_str());
+    }
 }

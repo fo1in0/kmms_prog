@@ -1,0 +1,11 @@
+cmake_minimum_required(VERSION 3.10)
+
+project(containers)
+
+set(CONTAINERS_LIB "containers_lib")
+add_library(${CONTAINERS_LIB} "")
+
+add_subdirectory(googletest)
+add_subdirectory(src)
+enable_testing()
+add_subdirectory(test)
