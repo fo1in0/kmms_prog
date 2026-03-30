@@ -91,13 +91,12 @@ TEST(DoublyLinkedListTest, RemoveFirstDuplicate) {
 	EXPECT_TRUE(list.remove_first(20));
 	EXPECT_EQ(list.get_size(), 1);
 
+	// 10, 20, 30
 	list.push_back(20);
-	list.push_back(10);
 	list.push_back(30);
 	EXPECT_TRUE(list.remove_first(20));
 	EXPECT_EQ(list.get_size(), 2);
-	// Должен удалить первый 20, второй 20 должен остаться
-	EXPECT_TRUE(list.has_item(20));
+	EXPECT_TRUE(list.has_item(30));
 
 	list.push_back(20);
 	EXPECT_TRUE(list.remove_first(20));
