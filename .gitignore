@@ -15,7 +15,7 @@ Makefile
 *.ninja
 *.ninja_deps
 
-
+.vscode/
 .vs/
 .idea/
 *.user
