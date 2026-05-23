@@ -66,16 +66,13 @@ void MovingObjectManager::DeleteMoving(int index) {
 void MovingObjectManager::UpdateAll(Object** bricks, int brickCount, int mapHeight) {
     for (int i = 0; i < length; i++) {
         if (!moving[i]) continue;
-        
-        // VertMoveObject (как в оригинале)
+   
         moving[i]->VertMove(bricks, brickCount);
-        
-        // HorizonMoveObject (как в оригинале)
+            
         float oldX = moving[i]->GetX();
         moving[i]->SetPosition(moving[i]->GetX() + moving[i]->GetHorizSpeed(), moving[i]->GetY());
         
-        // Проверка столкновения с кирпичами
-        for (int j = 0; j < brickCount; j++) {
+              for (int j = 0; j < brickCount; j++) {
             if (bricks[j] && moving[i]->IsCollision(*bricks[j])) {
                 moving[i]->SetPosition(oldX, moving[i]->GetY());
                 moving[i]->ReverseDirection();
@@ -83,7 +80,6 @@ void MovingObjectManager::UpdateAll(Object** bricks, int brickCount, int mapHeig
             }
         }
         
-        // Логика для врагов (cType == 'o') из оригинального HorizonMoveObject
         if (moving[i]->GetType() == 'o') {
             MovingObject temp = *moving[i];
             temp.VertMove(bricks, brickCount);
@@ -93,7 +89,6 @@ void MovingObjectManager::UpdateAll(Object** bricks, int brickCount, int mapHeig
             }
         }
         
-        // Удаление за пределами карты (как в оригинале)
         if (moving[i]->GetY() > mapHeight) {
             DeleteMoving(i);
             i--;
