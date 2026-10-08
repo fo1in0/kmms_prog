@@ -1,6 +1,4 @@
 #include "Brick.hpp"
-#include "Mario.hpp"
-#include "MovingObject.hpp"
 
 Brick::Brick() : Object() {}
 

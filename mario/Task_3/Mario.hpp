@@ -1,9 +1,9 @@
 #ifndef MARIO_HPP
 #define MARIO_HPP
 
-#include "Object.hpp"
+#include "Movable.hpp"
 
-class Mario : public Object {
+class Mario : public Movable {
 public:
     Mario();
     ~Mario();

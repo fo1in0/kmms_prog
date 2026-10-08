@@ -4,10 +4,10 @@
 #include <cstdlib>
 #include <cstring>
 
-MovingObject::MovingObject() : Object() {}
+MovingObject::MovingObject() : Movable() {}
 
 MovingObject::MovingObject(float xPos, float yPos, float oWidth, float oHeight, char type)
-    : Object(xPos, yPos, oWidth, oHeight, type) {
+    : Movable(xPos, yPos, oWidth, oHeight, type) {
     horizSpeed = 0.2f;
     vertSpeed = 0;
     isFly = FALSE;
@@ -15,19 +15,15 @@ MovingObject::MovingObject(float xPos, float yPos, float oWidth, float oHeight, 
 
 MovingObject::~MovingObject() {}
 
-void MovingObject::Update() {}
-
-void MovingObject::ReverseDirection() {
-    horizSpeed = -horizSpeed;
+void MovingObject::Update() {
+    // Пустая реализация
 }
 
 void MovingObject::VertMove(Object** bricks, int brickCount) {
-    isFly = TRUE;
-    vertSpeed += 0.05f;
-    y += vertSpeed;
+    ApplyGravity();
 
     for (int i = 0; i < brickCount; i++) {
-        if (bricks[i] && IsCollision(*bricks[i])) {
+        if (bricks[i] && Object::IsCollision(*this, *bricks[i])) {
             y -= vertSpeed;
             if (vertSpeed > 0) {
                 isFly = FALSE;
@@ -72,8 +68,8 @@ void MovingObjectManager::UpdateAll(Object** bricks, int brickCount, int mapHeig
         float oldX = moving[i]->GetX();
         moving[i]->SetPosition(moving[i]->GetX() + moving[i]->GetHorizSpeed(), moving[i]->GetY());
         
-              for (int j = 0; j < brickCount; j++) {
-            if (bricks[j] && moving[i]->IsCollision(*bricks[j])) {
+        for (int j = 0; j < brickCount; j++) {
+            if (bricks[j] && Object::IsCollision(*moving[i], *bricks[j])) {
                 moving[i]->SetPosition(oldX, moving[i]->GetY());
                 moving[i]->ReverseDirection();
                 break;

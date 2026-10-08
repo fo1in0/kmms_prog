@@ -1,6 +1,6 @@
 #include "Mario.hpp"
 
-Mario::Mario() : Object(39, 10, 3, 3, '@') {
+Mario::Mario() : Movable(39, 10, 3, 3, '@') {
     vertSpeed = 0;
     isFly = FALSE;
     horizSpeed = 0.2f;
@@ -10,7 +10,7 @@ Mario::~Mario() {}
 
 void Mario::Jump() {
     if (!isFly)
-        vertSpeed = -1.2f;
+        vertSpeed = -1.0f;
 }
 
 void Mario::Update() {}

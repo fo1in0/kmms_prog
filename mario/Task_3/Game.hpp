@@ -22,6 +22,7 @@ private:
     void HorizonMoveMap(float dx);
     void MarioCollision();
     Brick* GetNewBrick();
+    void CreateBrick(float x, float y, float w, float h, char type);
     
 public:
     Game();

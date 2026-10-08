@@ -7,10 +7,7 @@ class Object {
 protected:
     float x, y;
     float width, height;
-    float vertSpeed;
-    float horizSpeed;
     char cType;
-    BOOL isFly;
 
 public:
     Object();
@@ -22,18 +19,11 @@ public:
     float GetY() const;
     float GetWidth() const;
     float GetHeight() const;
-    float GetVertSpeed() const;
-    float GetHorizSpeed() const;
     char GetType() const;
-    BOOL IsFly() const;
-    
-    void SetVertSpeed(float speed);
-    void SetHorizSpeed(float speed);
     void SetType(char type);
-    void SetIsFly(BOOL fly);
     
     virtual void Update();
-    virtual bool IsCollision(const Object& other) const;
+    static BOOL IsCollision(const Object& o1, const Object& o2);
 };
 
 #endif

@@ -51,7 +51,7 @@ void SetObjectPos(TObject *obj, float xPos, float yPos)
     (*obj).y = yPos;
 }
 
-void InitObject(TObject *obj, float xPos, float yPos, float oWidth, float oHeight, char inType) 
+void initObject(TObject *obj, float xPos, float yPos, float oWidth, float oHeight, char inType) 
 {
     SetObjectPos(obj, xPos, yPos);
     (*obj).width = oWidth; 
@@ -101,7 +101,7 @@ void VertMoveObject(TObject *obj)
                 if (brick[i].cType == '?')
                 {
                     brick[i].cType = '-';
-                    InitObject(GetNewMoving(), brick[i].x, brick[i].y - 3, 3, 2, '$');
+                    initObject(GetNewMoving(), brick[i].x, brick[i].y - 3, 3, 2, '$');
                     moving[movingLength - 1].vertSpeed = -0.7;
                 }
             }
@@ -266,61 +266,96 @@ void CreateLevel(int lvl)
     movingLength = 0;
     moving = (TObject*)realloc(moving,0);
 
-    InitObject(&mario, 39, 10, 3, 3, '@');
+    initObject(&mario, 39, 10, 3, 3, '@');
     score = 0;
 
     if (lvl == 1)
     {
-        InitObject(GetNewBrick(), 20,20,40,5, '#');
-            InitObject(GetNewBrick(), 30,10,5,3, '?');
-            InitObject(GetNewBrick(), 50,10,3,3, '?');
-        InitObject(GetNewBrick(), 60,18,40,10, '#');
-        InitObject(GetNewBrick(), 100,22,20,5, '#');
-            InitObject(GetNewBrick(), 60,5,10,3, '-');
-            InitObject(GetNewBrick(), 70,5,5,3, '?');
-            InitObject(GetNewBrick(), 75,5,5,3, '-');
-            InitObject(GetNewBrick(), 80,5,5,3, '?');
-            InitObject(GetNewBrick(), 85,5,10,3, '-');
-        InitObject(GetNewBrick(), 120,15,10,10, '#');
-        InitObject(GetNewBrick(), 150,20,40,5, '#');
-        InitObject(GetNewBrick(), 210,15,10,10, '+');
-
-        InitObject(GetNewMoving(), 25 , 10,3,2, 'o'); 
-        InitObject(GetNewMoving(), 80 , 10,3,2, 'o'); 
-    }
-
-    if (lvl == 2)
+        if (lvl == 1)
     {
-        InitObject(GetNewBrick(), 20,20,40,5, '#');
-        InitObject(GetNewBrick(), 60,15,10,10, '#');
-        InitObject(GetNewBrick(), 80,20,20,5, '#');
-        InitObject(GetNewBrick(), 120,15,10,10, '#');
-        InitObject(GetNewBrick(), 150,20,40,5, '#');
-        InitObject(GetNewBrick(), 210,15,10,10, '+');
+        initObject(getNewBrick(),  0, 21, 207, 4, '#');
 
-        InitObject(GetNewMoving(), 25 , 10,3,2, 'o'); 
-        InitObject(GetNewMoving(), 80 , 10,3,2, 'o'); 
-        InitObject(GetNewMoving(), 65 , 10,3,2, 'o'); 
-        InitObject(GetNewMoving(), 120 , 10,3,2, 'o'); 
-        InitObject(GetNewMoving(), 160 , 10,3,2, 'o'); 
-        InitObject(GetNewMoving(), 175 , 10,3,2, 'o'); 
-        
-    }
-    if (lvl == 3)
-    {
-        InitObject(GetNewBrick(), 20,20,40,5, '#');
-        InitObject(GetNewBrick(), 80,15,15,10, '#');
-        InitObject(GetNewBrick(), 120,20,20, 10, '#');
-        InitObject(GetNewBrick(), 160,15,10,10, '+');
+            initObject(getNewBrick(), 48, 13, 3, 2, '?');
+            initObject(getNewBrick(), 60, 13, 3, 2, '#');
+            initObject(getNewBrick(), 63, 13, 3, 2, '?');
+            initObject(getNewBrick(), 66, 13, 3, 2, '#');
+            initObject(getNewBrick(), 69, 13, 3, 2, '?');
+            initObject(getNewBrick(), 72, 13, 3, 2, '#');
+            initObject(getNewBrick(), 66, 5, 3, 2, '?');
 
-        InitObject(GetNewMoving(), 25 , 10,3,2, 'o'); 
-        InitObject(GetNewMoving(), 50 , 10,3,2, 'o'); 
-        InitObject(GetNewMoving(), 80 , 10,3,2, 'o'); 
-        InitObject(GetNewMoving(), 90 , 10,3,2, 'o'); 
-        InitObject(GetNewMoving(), 120 , 10,3,2, 'o'); 
-        InitObject(GetNewMoving(), 135 , 10,3,2, 'o');
-        
-    }
+        initObject(getNewBrick(), 84, 17, 6, 2, '#');
+        initObject(getNewBrick(), 85, 19, 4, 2, '#');
+
+        initObject(getNewBrick(), 114, 15, 6, 2, '#');
+        initObject(getNewBrick(), 115, 17, 4, 4, '#');
+
+        initObject(getNewBrick(), 138, 13, 6, 2, '#');
+        initObject(getNewBrick(), 139, 15, 4, 6, '#');
+
+        initObject(getNewBrick(), 171, 13, 6, 2, '#');
+        initObject(getNewBrick(), 172, 15, 4, 6, '#');
+        // --
+        initObject(getNewBrick(),  213, 21, 45, 4, '#');
+            initObject(getNewBrick(), 231, 13, 3, 2, '#');
+            initObject(getNewBrick(), 234, 13, 3, 2, '?');
+            initObject(getNewBrick(), 237, 13, 3, 2, '#');
+                initObject(getNewBrick(), 240, 5, 24, 2, '#');
+        // --
+        initObject(getNewBrick(),  267, 21, 192, 4, '#');
+                initObject(getNewBrick(), 273, 5, 9, 2, '#');
+                initObject(getNewBrick(), 282, 5, 3, 2, '?');
+            initObject(getNewBrick(), 282, 13, 3, 2, '?');
+            initObject(getNewBrick(), 300, 13, 6, 2, '#');
+            initObject(getNewBrick(), 318, 13, 3, 2, '?');
+            initObject(getNewBrick(), 327, 13, 3, 2, '?');
+                initObject(getNewBrick(), 327, 5, 3, 2, '?');
+            initObject(getNewBrick(), 336, 13, 3, 2, '?');
+            initObject(getNewBrick(), 354, 13, 3, 2, '#');
+                initObject(getNewBrick(), 363, 5, 9, 2, '#');
+                initObject(getNewBrick(), 384, 5, 3, 2, '#');
+                initObject(getNewBrick(), 387, 5, 3, 2, '?');
+                initObject(getNewBrick(), 390, 5, 3, 2, '?');
+                initObject(getNewBrick(), 393, 5, 3, 2, '#');
+            initObject(getNewBrick(), 387, 13, 6, 2, '#');
+            //лестница
+            initObject(getNewBrick(), 402, 19, 12, 2, '#');
+            initObject(getNewBrick(), 405, 17, 9, 2, '#');
+            initObject(getNewBrick(), 408, 15, 6, 2, '#');
+            initObject(getNewBrick(), 411, 13, 3, 2, '#');
+
+            initObject(getNewBrick(), 420, 13, 3, 2, '#');
+            initObject(getNewBrick(), 420, 15, 6, 2, '#');
+            initObject(getNewBrick(), 420, 17, 9, 2, '#');
+            initObject(getNewBrick(), 420, 19, 12, 2, '#');
+
+            initObject(getNewBrick(), 444, 19, 15, 2, '#');
+            initObject(getNewBrick(), 447, 17, 12, 2, '#');
+            initObject(getNewBrick(), 450, 15, 9, 2, '#');
+            initObject(getNewBrick(), 453, 13, 6, 2, '#');
+        // --
+        initObject(getNewBrick(), 465, 21, 165, 4, '#');
+            initObject(getNewBrick(), 465, 13, 3, 2, '#');
+            initObject(getNewBrick(), 465, 15, 6, 2, '#');
+            initObject(getNewBrick(), 465, 17, 9, 2, '#');
+            initObject(getNewBrick(), 465, 19, 12, 2, '#');
+
+            initObject(getNewBrick(), 489, 17, 6, 2, '#');
+            initObject(getNewBrick(), 490, 19, 4, 2, '#');
+
+            initObject(getNewBrick(), 504, 13, 6, 2, '#');
+            initObject(getNewBrick(), 510, 13, 3, 2, '?');
+            initObject(getNewBrick(), 513, 13, 3, 2, '#');
+
+            initObject(getNewBrick(), 537, 17, 6, 2, '#');
+            initObject(getNewBrick(), 538, 19, 4, 2, '#');
+            // лестница большая
+            initObject(getNewBrick(), 543, 19, 27, 2, '#');
+            initObject(getNewBrick(), 546, 17, 24, 2, '#');
+            initObject(getNewBrick(), 549, 15, 21, 2, '#');
+            initObject(getNewBrick(), 552, 13, 18, 2, '#');
+            initObject(getNewBrick(), 555, 11, 15, 2, '#');
+            initObject(getNewBrick(), 558,  9, 12, 2, '#');
+            initObject
 
     maxLvl = 3;
 }

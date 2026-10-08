@@ -47,10 +47,12 @@ bool Vector<T>::insert(const std::size_t position, const T& value) {
         arr = new_arr;
     }
     
-	for (std::size_t i = size; i > position; --i) {
-        arr[i] = arr[i - 1];
+    if (position < size) {
+        for (std::size_t i = size; i > position; --i) {
+            arr[i] = arr[i - 1];
+        }
     }
-    
+
     arr[position] = value;
     ++size;
     return true;

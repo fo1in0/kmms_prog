@@ -24,6 +24,11 @@ Brick* Game::GetNewBrick() {
     return bricks[brickLength++];
 }
 
+void Game::CreateBrick(float x, float y, float w, float h, char type) {
+    Brick* b = GetNewBrick();
+    *b = Brick(x, y, w, h, type);
+}
+
 void Game::CreateLevel(int lvl) {
     system("color 9F");
     
@@ -38,49 +43,30 @@ void Game::CreateLevel(int lvl) {
     score = 0;
     
     if (lvl == 1) {
-        Brick* b = GetNewBrick();
-        *b = Brick(20, 20, 40, 5, '#');
-        b = GetNewBrick();
-        *b = Brick(30, 10, 5, 3, '?');
-        b = GetNewBrick();
-        *b = Brick(50, 10, 3, 3, '?');
-        b = GetNewBrick();
-        *b = Brick(60, 18, 40, 10, '#');
-        b = GetNewBrick();
-        *b = Brick(100, 22, 20, 5, '#');
-        b = GetNewBrick();
-        *b = Brick(60, 5, 10, 3, '-');
-        b = GetNewBrick();
-        *b = Brick(70, 5, 5, 3, '?');
-        b = GetNewBrick();
-        *b = Brick(75, 5, 5, 3, '-');
-        b = GetNewBrick();
-        *b = Brick(80, 5, 5, 3, '?');
-        b = GetNewBrick();
-        *b = Brick(85, 5, 10, 3, '-');
-        b = GetNewBrick();
-        *b = Brick(120, 15, 10, 10, '#');
-        b = GetNewBrick();
-        *b = Brick(150, 20, 40, 5, '#');
-        b = GetNewBrick();
-        *b = Brick(210, 15, 10, 10, '+');
+        CreateBrick(20, 20, 40, 5, '#');
+        CreateBrick(30, 10, 5, 3, '?');
+        CreateBrick(50, 10, 3, 3, '?');
+        CreateBrick(60, 18, 40, 10, '#');
+        CreateBrick(100, 22, 20, 5, '#');
+        CreateBrick(60, 5, 10, 3, '-');
+        CreateBrick(70, 5, 5, 3, '?');
+        CreateBrick(75, 5, 5, 3, '-');
+        CreateBrick(80, 5, 5, 3, '?');
+        CreateBrick(85, 5, 10, 3, '-');
+        CreateBrick(120, 15, 10, 10, '#');
+        CreateBrick(150, 20, 40, 5, '#');
+        CreateBrick(210, 15, 10, 10, '+');
         
         movingManager.AddMovingObject(25, 10, 3, 2, 'o');
         movingManager.AddMovingObject(80, 10, 3, 2, 'o');
     }
     else if (lvl == 2) {
-        Brick* b = GetNewBrick();
-        *b = Brick(20, 20, 40, 5, '#');
-        b = GetNewBrick();
-        *b = Brick(60, 15, 10, 10, '#');
-        b = GetNewBrick();
-        *b = Brick(80, 20, 20, 5, '#');
-        b = GetNewBrick();
-        *b = Brick(120, 15, 10, 10, '#');
-        b = GetNewBrick();
-        *b = Brick(150, 20, 40, 5, '#');
-        b = GetNewBrick();
-        *b = Brick(210, 15, 10, 10, '+');
+        CreateBrick(20, 20, 40, 5, '#');
+        CreateBrick(60, 15, 10, 10, '#');
+        CreateBrick(80, 20, 20, 5, '#');
+        CreateBrick(120, 15, 10, 10, '#');
+        CreateBrick(150, 20, 40, 5, '#');
+        CreateBrick(210, 15, 10, 10, '+');
         
         movingManager.AddMovingObject(25, 10, 3, 2, 'o');
         movingManager.AddMovingObject(80, 10, 3, 2, 'o');
@@ -90,14 +76,10 @@ void Game::CreateLevel(int lvl) {
         movingManager.AddMovingObject(175, 10, 3, 2, 'o');
     }
     else if (lvl == 3) {
-        Brick* b = GetNewBrick();
-        *b = Brick(20, 20, 40, 5, '#');
-        b = GetNewBrick();
-        *b = Brick(80, 15, 15, 10, '#');
-        b = GetNewBrick();
-        *b = Brick(120, 20, 20, 10, '#');
-        b = GetNewBrick();
-        *b = Brick(160, 15, 10, 10, '+');
+        CreateBrick(20, 20, 40, 5, '#');
+        CreateBrick(80, 15, 15, 10, '#');
+        CreateBrick(120, 20, 20, 10, '#');
+        CreateBrick(160, 15, 10, 10, '+');
         
         movingManager.AddMovingObject(25, 10, 3, 2, 'o');
         movingManager.AddMovingObject(50, 10, 3, 2, 'o');
@@ -114,16 +96,18 @@ void Game::PlayerDead() {
     CreateLevel(level);
 }
 
+// ИСПРАВЛЕННЫЙ HorizonMoveMap
 void Game::HorizonMoveMap(float dx) {
     float oldX = mario.GetX();
     mario.SetPosition(mario.GetX() - dx, mario.GetY());
     
     for (int i = 0; i < brickLength; i++) {
-        if (bricks[i] && mario.IsCollision(*bricks[i])) {
+        if (bricks[i] && Object::IsCollision(mario, *bricks[i])) {
             mario.SetPosition(oldX, mario.GetY());
             return;
         }
     }
+    
     mario.SetPosition(oldX, mario.GetY());
     
     for (int i = 0; i < brickLength; i++)
@@ -139,7 +123,7 @@ void Game::HorizonMoveMap(float dx) {
 void Game::MarioCollision() {
     for (int i = 0; i < movingManager.GetLength(); i++) {
         MovingObject* movingObj = movingManager.Get(i);
-        if (movingObj && mario.IsCollision(*movingObj)) {
+        if (movingObj && Object::IsCollision(mario, *movingObj)) {
             if (movingObj->GetType() == 'o') {
                 if (mario.IsFly() && mario.GetVertSpeed() > 0 &&
                     mario.GetY() + mario.GetHeight() < movingObj->GetY() + movingObj->GetHeight() * 0.5) {
@@ -163,7 +147,7 @@ void Game::MarioCollision() {
 
 void Game::ProcessInput() {
     if ((mario.IsFly() == FALSE) && (GetKeyState(VK_SPACE) < 0))
-        mario.SetVertSpeed(-1.2f);
+        mario.SetVertSpeed(-3.0f);
     if (GetKeyState('A') < 0)
         HorizonMoveMap(1);
     if (GetKeyState('D') < 0)
@@ -174,14 +158,13 @@ void Game::Update() {
     if (mario.GetY() > MAP_HEIGHT)
         PlayerDead();
     
-    // VertMove для Марио
     mario.SetIsFly(TRUE);
     mario.SetVertSpeed(mario.GetVertSpeed() + 0.05f);
     float newY = mario.GetY() + mario.GetVertSpeed();
     mario.SetPosition(mario.GetX(), newY);
     
     for (int i = 0; i < brickLength; i++) {
-        if (bricks[i] && mario.IsCollision(*bricks[i])) {
+        if (bricks[i] && Object::IsCollision(mario, *bricks[i])) {
             mario.SetPosition(mario.GetX(), newY - mario.GetVertSpeed());
             
             if (mario.GetVertSpeed() > 0) {
@@ -236,6 +219,6 @@ void Game::Run() {
         ProcessInput();
         Update();
         Render();
-        Sleep(16);
+        Sleep(10);
     } while (GetKeyState(VK_ESCAPE) >= 0);
 }
